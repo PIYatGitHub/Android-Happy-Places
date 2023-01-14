@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="main_contant_padding">16dp</dimen>
+    <dimen name="edit_text_text_size">16sp</dimen>
+    <dimen name="btn_text_size">22sp</dimen>
+    <dimen name="add_screen_placeholder_width">180dp</dimen>
+    <dimen name="add_screen_placeholder_height">180dp</dimen>
+    <dimen name="add_screen_margin_top">150dp</dimen>
+    <dimen name="add_screen_placeholder_padding">5dp</dimen>
+    <dimen name="add_screen_text_add_image_padding_top">15dp</dimen>
+    <dimen name="add_screen_text_add_image_margin_top">10dp</dimen>
+    <dimen name="add_screen_save_btn_margin_top">15dp</dimen>
+    <dimen name="add_screen_btn_save_padding_top">5dp</dimen>
+    <dimen name="add_screen_btn_save_padding_bottom">10dp</dimen>
+    <dimen name="button_radius">14dp</dimen>
+    <dimen name="image_border_stroke_size">0.5dp</dimen>
+    <dimen name="add_place_image_shape_radius">5dp</dimen>
 </resources>
