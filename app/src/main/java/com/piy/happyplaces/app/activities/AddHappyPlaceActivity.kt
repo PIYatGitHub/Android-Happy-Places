@@ -1,4 +1,4 @@
-package com.piy.happyplaces.app
+package com.piy.happyplaces.app.activities
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -17,6 +17,8 @@ import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import com.piy.happyplaces.app.ManagePermissions
+import com.piy.happyplaces.app.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -29,6 +31,10 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     private val PermissionsRequestCode = 123
     private lateinit var manageMediaPermissions: ManagePermissions
     private lateinit var manageCameraPermissions: ManagePermissions
+
+    private var saveImageToInernalStorage: Uri? = null
+    private var mLatitude: Double = 0.0
+    private var mLongitude: Double = 0.0
 
 
     companion object {
@@ -56,7 +62,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
         etDate.setOnClickListener(this)
         tvAddImage.setOnClickListener(this)
-
+        btnSave.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -83,6 +89,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
                 pictureDialog.show()
+            }
+            R.id.btnSave ->{
+                // TODO: save to db
             }
         }
     }
@@ -149,9 +158,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         val selectedImgBitmap =
                             MediaStore.Images.Media.getBitmap(this.contentResolver, contentUri)
                         ivPlaceImage.setImageBitmap(selectedImgBitmap)
-                       val imageUri = saveImageToInternalStorage(selectedImgBitmap)
-                        println("[IMAGE URL] $imageUri")
-
+                      saveImageToInernalStorage = saveImageToInternalStorage(selectedImgBitmap)
                     } catch (exception: IOException) {
                         exception.printStackTrace()
                         Toast.makeText(
@@ -166,8 +173,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             if (requestCode == PICK_IMAGE_CAMERA) {
                val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
                 ivPlaceImage.setImageBitmap(thumbnail)
-                val imageUri = saveImageToInternalStorage(thumbnail)
-                println("[IMAGE URL] $imageUri")
+                saveImageToInernalStorage = saveImageToInternalStorage(thumbnail)
             }
         }
     }
