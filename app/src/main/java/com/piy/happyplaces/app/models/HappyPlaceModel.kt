@@ -1,7 +1,8 @@
 package com.piy.happyplaces.app.models
 
 data class HappyPlaceModel(
-    val id: Int, val title: String,
+    val id: Int,
+    val title: String,
     val image: String,
     val description: String,
     val date: String,

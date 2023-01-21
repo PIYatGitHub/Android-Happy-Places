@@ -19,6 +19,8 @@ import android.net.Uri
 import android.provider.MediaStore
 import com.piy.happyplaces.app.ManagePermissions
 import com.piy.happyplaces.app.R
+import com.piy.happyplaces.app.database.DatabaseHanler
+import com.piy.happyplaces.app.models.HappyPlaceModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -60,6 +62,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
             updateDateInView()
         }
+
+        updateDateInView() //add today by default
         etDate.setOnClickListener(this)
         tvAddImage.setOnClickListener(this)
         btnSave.setOnClickListener(this)
@@ -90,13 +94,48 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 pictureDialog.show()
             }
-            R.id.btnSave ->{
-                // TODO: save to db
+            R.id.btnSave -> {
+                when {
+                    etTitle.text.isNullOrEmpty() -> showToast("Please enter a title")
+                    etDescription.text.isNullOrEmpty() -> showToast("Please enter a description")
+                    etLocation.text.isNullOrEmpty() -> showToast("Please enter a location")
+                    saveImageToInernalStorage == null -> showToast("Please select an image")
+                    else -> {
+
+                        val data = HappyPlaceModel(
+                            0,
+                            etTitle.text.toString(),
+                            saveImageToInernalStorage.toString(),
+                            etDescription.text.toString(),
+                            etDate.text.toString(),
+                            etLocation.text.toString(),
+                            mLatitude,
+                            mLongitude
+                        )
+
+                        val dbHanler = DatabaseHanler(this)
+                        val insertResult  = dbHanler.addHappyPlace(data)
+                        if(insertResult > 0){
+                            showToast("Inserted succesfully.")
+                            finish()
+                        }
+                    }
+                }
+
+
             }
         }
     }
 
-    private fun saveImageToInternalStorage(bitmap: Bitmap):Uri{
+    private fun showToast(text: String) {
+        Toast.makeText(
+            this@AddHappyPlaceActivity,
+            text,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun saveImageToInternalStorage(bitmap: Bitmap): Uri {
         val wrapper = ContextWrapper(applicationContext)
         var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
         file = File(file, "${UUID.randomUUID()}.jpeg")
@@ -105,7 +144,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 
@@ -158,7 +197,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         val selectedImgBitmap =
                             MediaStore.Images.Media.getBitmap(this.contentResolver, contentUri)
                         ivPlaceImage.setImageBitmap(selectedImgBitmap)
-                      saveImageToInernalStorage = saveImageToInternalStorage(selectedImgBitmap)
+                        saveImageToInernalStorage = saveImageToInternalStorage(selectedImgBitmap)
                     } catch (exception: IOException) {
                         exception.printStackTrace()
                         Toast.makeText(
@@ -171,7 +210,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             if (requestCode == PICK_IMAGE_CAMERA) {
-               val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
+                val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
                 ivPlaceImage.setImageBitmap(thumbnail)
                 saveImageToInernalStorage = saveImageToInternalStorage(thumbnail)
             }
