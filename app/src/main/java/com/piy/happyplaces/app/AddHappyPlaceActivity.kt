@@ -12,9 +12,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.Manifest
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.Bitmap
+import android.net.Uri
 import android.provider.MediaStore
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 
 
 class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
@@ -28,6 +34,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         private const val GALLERY_PICK_IMAGE = 1
         private const val PICK_IMAGE_CAMERA = 2
+        private const val IMAGE_DIRECTORY = "HappyPlacesImages"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +87,22 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun saveImageToInternalStorage(bitmap: Bitmap):Uri{
+        val wrapper = ContextWrapper(applicationContext)
+        var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
+        file = File(file, "${UUID.randomUUID()}.jpeg")
+        try {
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+
+        return Uri.parse(file.absolutePath)
+    }
+
     private fun updateDateInView() {
         val formatter = "dd.MM.yyyy"
         val sdf = SimpleDateFormat(formatter, Locale.getDefault())
@@ -126,6 +149,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         val selectedImgBitmap =
                             MediaStore.Images.Media.getBitmap(this.contentResolver, contentUri)
                         ivPlaceImage.setImageBitmap(selectedImgBitmap)
+                       val imageUri = saveImageToInternalStorage(selectedImgBitmap)
+                        println("[IMAGE URL] $imageUri")
 
                     } catch (exception: IOException) {
                         exception.printStackTrace()
@@ -141,6 +166,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             if (requestCode == PICK_IMAGE_CAMERA) {
                val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
                 ivPlaceImage.setImageBitmap(thumbnail)
+                val imageUri = saveImageToInternalStorage(thumbnail)
+                println("[IMAGE URL] $imageUri")
             }
         }
     }
