@@ -19,7 +19,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import com.piy.happyplaces.app.ManagePermissions
 import com.piy.happyplaces.app.R
-import com.piy.happyplaces.app.database.DatabaseHanler
+import com.piy.happyplaces.app.database.DatabaseHandler
 import com.piy.happyplaces.app.models.HappyPlaceModel
 import java.io.File
 import java.io.FileOutputStream
@@ -113,10 +113,10 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                             mLongitude
                         )
 
-                        val dbHanler = DatabaseHanler(this)
+                        val dbHanler = DatabaseHandler(this)
                         val insertResult  = dbHanler.addHappyPlace(data)
                         if(insertResult > 0){
-                            showToast("Inserted succesfully.")
+                            showToast("Inserted successfully.")
                             finish()
                         }
                     }
