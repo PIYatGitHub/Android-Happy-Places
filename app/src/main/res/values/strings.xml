@@ -7,4 +7,5 @@
     <string name="edit_text_hint_description">Description</string>
     <string name="add_image">ADD IMAGE</string>
     <string name="note_text_no_happy_places">No happy places yet, please add one.</string>
+    <string name="image_content_description">A happy place photo you took </string>
 </resources>
